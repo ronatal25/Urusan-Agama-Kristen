@@ -41,6 +41,29 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+/* ---------- kompres foto sebelum disimpan (biar muat di Firestore & hemat kuota) ---------- */
+function compressImageFile(file, maxWidth = 900, quality = 0.6){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
   const ADMIN_USER = 'admin';
@@ -117,14 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.readAsDataURL(file);
   });
 
-  function getSavedGalleryPhotos(){
-    try{ return JSON.parse(localStorage.getItem('bimasGalleryPhotos') || '[]'); }
-    catch(e){ return []; }
-  }
-  function saveGalleryPhotos(list){
-    localStorage.setItem('bimasGalleryPhotos', JSON.stringify(list));
-  }
-
 function buildGalleryCard(item){
   const figure = document.createElement('figure');
   figure.className = 'gallery-card';
@@ -158,34 +173,43 @@ function buildGalleryCard(item){
   figure.appendChild(photoDiv);
   figure.appendChild(figcaption);
 
-    figure.appendChild(photoDiv);
-    figure.appendChild(figcaption);
-
     const delBtn = document.createElement('button');
     delBtn.type = 'button';
     delBtn.className = 'gallery-card-delete admin-only';
     delBtn.setAttribute('aria-label','Hapus foto');
     delBtn.textContent = '\u00D7';
-    delBtn.addEventListener('click', () => {
+    delBtn.addEventListener('click', async () => {
       if(!isAdmin()) return;
       if(!confirm('Hapus foto "' + item.caption + '"?')) return;
-      const list = getSavedGalleryPhotos().filter(p => p.id !== item.id);
-      saveGalleryPhotos(list);
-      figure.remove();
+      try{
+        await db.collection('galeri').doc(item.id).delete();
+      }catch(err){
+        alert('Gagal menghapus foto: ' + err.message);
+      }
     });
     figure.appendChild(delBtn);
 
     return figure;
   }
 
-  function renderSavedGalleryPhotos(){
-    getSavedGalleryPhotos().forEach(item => {
-      galleryGrid.appendChild(buildGalleryCard(item));
+  /* ---------- dengarkan perubahan galeri secara real-time dari Firestore ---------- */
+  db.collection('galeri').orderBy('createdAt', 'asc').onSnapshot((snapshot) => {
+    galleryGrid.innerHTML = '';
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      galleryGrid.appendChild(buildGalleryCard({
+        id: doc.id,
+        src: data.url,
+        caption: data.caption,
+        date: data.date,
+        desc: data.desc
+      }));
     });
-  }
-  renderSavedGalleryPhotos();
+  }, (err) => {
+    console.error('Gagal memuat galeri:', err);
+  });
 
-  addPhotoForm?.addEventListener('submit', (e) => {
+  addPhotoForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if(!isAdmin()){
       closeModal(addPhotoModal);
@@ -197,60 +221,61 @@ function buildGalleryCard(item){
     const date = document.getElementById('addPhotoDate').value.trim();
     if(!file || !caption || !date) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const item = { id: 'p' + Date.now(), src: reader.result, caption, date };
-      const list = getSavedGalleryPhotos();
-      list.push(item);
-      saveGalleryPhotos(list);
-      galleryGrid.appendChild(buildGalleryCard(item));
+    const submitBtn = addPhotoForm.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.textContent : '';
+    if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Mengunggah...'; }
+
+    try{
+      const dataUrl = await compressImageFile(file);
+
+      await db.collection('galeri').add({
+        url: dataUrl, caption, date,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
 
       addPhotoForm.reset();
       addPhotoPreview.hidden = true;
       closeModal(addPhotoModal);
-    };
-    reader.readAsDataURL(file);
+    }catch(err){
+      alert('Gagal menyimpan foto: ' + err.message);
+    }finally{
+      if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = originalBtnText; }
+    }
   });
 
-  /* ---------- ganti foto struktur organisasi ---------- */
-  function getSavedOrgPhotos(){
-    try{ return JSON.parse(localStorage.getItem('bimasOrgPhotos') || '{}'); }
-    catch(e){ return {}; }
-  }
-  function saveOrgPhotos(map){
-    localStorage.setItem('bimasOrgPhotos', JSON.stringify(map));
-  }
-
+  /* ---------- ganti foto struktur organisasi (tersimpan di Firestore) ---------- */
   const orgPhotoDivs = document.querySelectorAll('.org-photo[data-org-id]');
-  const savedOrgPhotos = getSavedOrgPhotos();
 
   orgPhotoDivs.forEach(div => {
     const id = div.dataset.orgId;
     const img = div.querySelector('img');
 
-    // pasang foto tersimpan (jika ada) saat halaman dibuka
-    if(savedOrgPhotos[id]){
-      img.src = savedOrgPhotos[id];
-      div.classList.remove('org-photo-fallback');
-    }
+    // ambil foto tersimpan (jika ada) saat halaman dibuka
+    db.collection('orgPhotos').doc(id).get().then((doc) => {
+      if(doc.exists && doc.data().url){
+        img.src = doc.data().url;
+        div.classList.remove('org-photo-fallback');
+      }
+    }).catch((err) => {
+      console.error('Gagal memuat foto struktur:', err);
+    });
 
     div.addEventListener('click', () => {
       if(!isAdmin()) return;
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'image/*';
-      input.addEventListener('change', () => {
+      input.addEventListener('change', async () => {
         const file = input.files[0];
         if(!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-          img.src = reader.result;
+        try{
+          const dataUrl = await compressImageFile(file, 500, 0.6);
+          await db.collection('orgPhotos').doc(id).set({ url: dataUrl });
+          img.src = dataUrl;
           div.classList.remove('org-photo-fallback');
-          const map = getSavedOrgPhotos();
-          map[id] = reader.result;
-          saveOrgPhotos(map);
-        };
-        reader.readAsDataURL(file);
+        }catch(err){
+          alert('Gagal menyimpan foto: ' + err.message);
+        }
       });
       input.click();
     });
@@ -286,14 +311,6 @@ function buildGalleryCard(item){
     reader.readAsDataURL(file);
   });
 
-  function getSavedPrestasi(){
-    try{ return JSON.parse(localStorage.getItem('bimasPrestasi') || '[]'); }
-    catch(e){ return []; }
-  }
-  function savePrestasi(list){
-    localStorage.setItem('bimasPrestasi', JSON.stringify(list));
-  }
-
   function buildPrestasiCard(item){
     const figure = document.createElement('figure');
     figure.className = 'prestasi-card';
@@ -325,26 +342,37 @@ function buildGalleryCard(item){
     delBtn.className = 'prestasi-card-delete admin-only';
     delBtn.setAttribute('aria-label','Hapus prestasi');
     delBtn.textContent = '\u00D7';
-    delBtn.addEventListener('click', () => {
+    delBtn.addEventListener('click', async () => {
       if(!isAdmin()) return;
       if(!confirm('Hapus prestasi "' + item.name + '"?')) return;
-      const list = getSavedPrestasi().filter(p => p.id !== item.id);
-      savePrestasi(list);
-      figure.remove();
+      try{
+        await db.collection('prestasi').doc(item.id).delete();
+      }catch(err){
+        alert('Gagal menghapus prestasi: ' + err.message);
+      }
     });
     figure.appendChild(delBtn);
 
     return figure;
   }
 
-  function renderSavedPrestasi(){
-    getSavedPrestasi().forEach(item => {
-      prestasiGrid.appendChild(buildPrestasiCard(item));
+  /* ---------- dengarkan perubahan prestasi secara real-time dari Firestore ---------- */
+  db.collection('prestasi').orderBy('createdAt', 'asc').onSnapshot((snapshot) => {
+    prestasiGrid.innerHTML = '';
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      prestasiGrid.appendChild(buildPrestasiCard({
+        id: doc.id,
+        src: data.url,
+        name: data.name,
+        year: data.year
+      }));
     });
-  }
-  renderSavedPrestasi();
+  }, (err) => {
+    console.error('Gagal memuat prestasi:', err);
+  });
 
-  addPrestasiForm?.addEventListener('submit', (e) => {
+  addPrestasiForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if(!isAdmin()){
       closeModal(addPrestasiModal);
@@ -356,19 +384,26 @@ function buildGalleryCard(item){
     const year = document.getElementById('addPrestasiYear').value.trim();
     if(!file || !name || !year) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const item = { id: 'pr' + Date.now(), src: reader.result, name, year };
-      const list = getSavedPrestasi();
-      list.push(item);
-      savePrestasi(list);
-      prestasiGrid.appendChild(buildPrestasiCard(item));
+    const submitBtn = addPrestasiForm.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.textContent : '';
+    if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Mengunggah...'; }
+
+    try{
+      const dataUrl = await compressImageFile(file);
+
+      await db.collection('prestasi').add({
+        url: dataUrl, name, year,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
 
       addPrestasiForm.reset();
       addPrestasiPreview.hidden = true;
       closeModal(addPrestasiModal);
-    };
-    reader.readAsDataURL(file);
+    }catch(err){
+      alert('Gagal menyimpan prestasi: ' + err.message);
+    }finally{
+      if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = originalBtnText; }
+    }
   });
 
 });
