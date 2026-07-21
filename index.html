@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bimas Kristen — Kantor Kementerian Agama Kabupaten Dairi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- ===== NAVIGASI ===== -->
+<header class="site-header" id="top">
+  <div class="header-inner">
+    <a class="brand" href="#top">
+      <div class="org-photo"><img src="logo kemenag.png" alt="Foto"></div>
+      <span class="brand-text">
+        <strong>SEKSI URUSAN AGAMA KRISTEN</strong>
+        <small>KEMENAG KABUPATEN DAIRI</small>
+      </span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="#profil">Profil</a>
+      <a href="#visi-misi">Visi &amp; Misi</a>
+      <a href="#struktur">Struktur</a>
+      <a href="#galeri">Galeri Kegiatan</a>
+      <a href="#prestasi">Prestasi</a>
+      <a href="#layanan">Layanan</a>
+      <a href="#kontak">Kontak</a>
+    </nav>
+    <button type="button" class="btn btn-small btn-admin-login" id="openLoginBtn">Login Admin</button>
+    <button type="button" class="btn btn-small btn-admin-logout admin-only" id="logoutBtn">Logout Admin</button>
+    <button class="nav-toggle" id="navToggle" aria-label="Buka menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== BANNER MODE ADMIN ===== -->
+<div class="admin-banner admin-only" id="adminBanner">
+  Mode Admin aktif &mdash; Anda dapat menambah &amp; mengganti foto di halaman ini.
+</div>
+
+<!-- ===== MODAL LOGIN ADMIN ===== -->
+<div class="modal-overlay" id="loginModal" hidden>
+  <div class="modal-box">
+    <button type="button" class="modal-close" id="closeLoginBtn" aria-label="Tutup">&times;</button>
+    <h3>Login Admin</h3>
+    <p class="modal-sub">Masuk untuk menambah atau mengganti foto pada website ini.</p>
+    <form id="loginForm">
+      <label>Username
+        <input type="text" id="loginUser" autocomplete="username" required>
+      </label>
+      <label>Password
+        <input type="password" id="loginPass" autocomplete="current-password" required>
+      </label>
+      <p class="modal-error" id="loginError" hidden>Username atau password salah.</p>
+      <button type="submit" class="btn btn-primary btn-small">Masuk</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===== MODAL TAMBAH FOTO GALERI ===== -->
+<div class="modal-overlay" id="addPhotoModal" hidden>
+  <div class="modal-box">
+    <button type="button" class="modal-close" id="closeAddPhotoBtn" aria-label="Tutup">&times;</button>
+    <h3>Tambah Foto Kegiatan</h3>
+    <p class="modal-sub">Pilih foto dari galeri laptop/HP Anda.</p>
+    <form id="addPhotoForm">
+      <img id="addPhotoPreview" class="add-photo-preview" hidden>
+      <label>Pilih Foto
+        <input type="file" id="addPhotoFileReal" accept="image/*" required>
+      </label>
+      <label>Nama Kegiatan
+        <input type="text" id="addPhotoCaption" placeholder="Contoh: Kunjungan Kebaktian Minggu" required>
+      </label>
+      <label>Tanggal
+        <input type="text" id="addPhotoDate" placeholder="Contoh: 10 Juli 2026" required>
+      </label>
+      <button type="submit" class="btn btn-primary btn-small">Simpan Foto</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===== MODAL TAMBAH PRESTASI ===== -->
+<div class="modal-overlay" id="addPrestasiModal" hidden>
+  <div class="modal-box">
+    <button type="button" class="modal-close" id="closeAddPrestasiBtn" aria-label="Tutup">&times;</button>
+    <h3>Tambah Prestasi</h3>
+    <p class="modal-sub">Unggah foto/sertifikat prestasi yang diraih.</p>
+    <form id="addPrestasiForm">
+      <img id="addPrestasiPreview" class="add-photo-preview" hidden>
+      <label>Pilih Foto/Sertifikat
+        <input type="file" id="addPrestasiFileReal" accept="image/*" required>
+      </label>
+      <label>Nama Prestasi
+        <input type="text" id="addPrestasiName" placeholder="Contoh: Juara 1 Paduan Suara Rohani Tingkat Provinsi" required>
+      </label>
+      <label>Tahun
+        <input type="text" id="addPrestasiYear" placeholder="Contoh: 2026" required>
+      </label>
+      <button type="submit" class="btn btn-primary btn-small">Simpan Prestasi</button>
+    </form>
+  </div>
+</div>
+
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="contour-bg" aria-hidden="true"></div>
+  <div class="particles" aria-hidden="true">
+    <span style="left:32.4%; width:5.1px; height:5.1px; animation-duration:14.9s; animation-delay:-12.7s; --drift:-38.0px; opacity:0.38;"></span>
+    <span style="left:49.7%; width:4.3px; height:4.3px; animation-duration:12.9s; animation-delay:-12.7s; --drift:-48.0px; opacity:0.38;"></span>
+    <span style="left:55.2%; width:10.6px; height:10.6px; animation-duration:14.7s; animation-delay:-3.5s; --drift:-49.0px; opacity:0.53;"></span>
+    <span style="left:93.8%; width:4.3px; height:4.3px; animation-duration:16.7s; animation-delay:-8.8s; --drift:-47.0px; opacity:0.61;"></span>
+    <span style="left:54.7%; width:8.8px; height:8.8px; animation-duration:9.9s; animation-delay:-3.7s; --drift:-39.0px; opacity:0.6;"></span>
+    <span style="left:7.9%; width:4.4px; height:4.4px; animation-duration:10.9s; animation-delay:-1.8s; --drift:59.0px; opacity:0.56;"></span>
+    <span style="left:88.8%; width:6.5px; height:6.5px; animation-duration:11.2s; animation-delay:-10.8s; --drift:-24.0px; opacity:0.49;"></span>
+    <span style="left:48.5%; width:6.4px; height:6.4px; animation-duration:13.0s; animation-delay:-3.0s; --drift:-26.0px; opacity:0.54;"></span>
+    <span style="left:73.2%; width:5.1px; height:5.1px; animation-duration:13.4s; animation-delay:-13.3s; --drift:-58.0px; opacity:0.61;"></span>
+    <span style="left:84.3%; width:6.2px; height:6.2px; animation-duration:15.3s; animation-delay:-3.3s; --drift:23.0px; opacity:0.39;"></span>
+    <span style="left:27.4%; width:8.9px; height:8.9px; animation-duration:9.6s; animation-delay:-0.8s; --drift:52.0px; opacity:0.8;"></span>
+    <span style="left:79.3%; width:6.0px; height:6.0px; animation-duration:12.5s; animation-delay:-2.0s; --drift:-67.0px; opacity:0.51;"></span>
+    <span style="left:59.4%; width:7.5px; height:7.5px; animation-duration:11.0s; animation-delay:-8.8s; --drift:-40.0px; opacity:0.76;"></span>
+    <span style="left:48.7%; width:5.2px; height:5.2px; animation-duration:12.6s; animation-delay:-9.0s; --drift:-61.0px; opacity:0.74;"></span>
+    <span style="left:28.2%; width:6.9px; height:6.9px; animation-duration:12.2s; animation-delay:1.9s; --drift:-28.0px; opacity:0.43;"></span>
+    <span style="left:23.8%; width:5.6px; height:5.6px; animation-duration:13.4s; animation-delay:-3.4s; --drift:34.0px; opacity:0.42;"></span>
+    <span style="left:52.3%; width:8.3px; height:8.3px; animation-duration:11.9s; animation-delay:-11.7s; --drift:-43.0px; opacity:0.74;"></span>
+    <span style="left:91.5%; width:8.8px; height:8.8px; animation-duration:14.0s; animation-delay:-6.8s; --drift:25.0px; opacity:0.64;"></span>
+  </div>
+  <div class="hero-inner">
+    <p class="eyebrow">Kementerian Agama Republik Indonesia · Kabupaten Dairi</p>
+    <h1>SEKSI URUSAN AGAMA KRISTEN<br><em></em></h1>
+    <p class="hero-lede">MELAYANI UMAT KRISTEN DI KAB. DAIRI UNTUK MENDUKUNG PROGRAM PEMERINTAH MELALUI BAHASA AGAMA .</p>
+    <div class="hero-actions">
+      <a href="#struktur" class="btn btn-primary">Lihat Struktur Organisasi</a>
+      <a href="#galeri" class="btn btn-ghost">Kegiatan Dan Dokumentasi </a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">15</span><span class="stat-label">Kecamatan Terlayani</span></div>
+    <div class="stat"><span class="stat-num">61+</span><span class="stat-label">Tahun Melayani</span></div>
+    <div class="stat"><span class="stat-num">16</span><span class="stat-label">Penyuluh Aktif</span></div>
+  </div>
+</section>
+
+  </div>
+</section>
+
+<!-- ===== PROFIL ===== -->
+<section class="section" id="profil">
+  <div class="section-inner">
+    <div class="section-head">
+      <p class="eyebrow">01 · Tentang Kami</p>
+      <h2>SEKSI URUSAN AGAMA KRISTEN KABUPATEN DAIRI</h2>
+    </div>
+    <div class="profil-grid">
+      <div class="profil-text">
+        <p>Bimbingan Masyarakat Kristen adalah salah satu bidang pelayanan pada Kantor Kementerian
+          Agama Kabupaten Dairi yang bertugas melaksanakan bimbingan, pelayanan, dan pembinaan
+          kehidupan beragama Kristen — mulai dari urusan penyuluhan, hingga
+          koordinasi dan bermitra dengan Gereja, lembaga keagamaan di seluruh wilayah Kabupaten Dairi, Sumatera Utara.</p>
+        <p>Dari Sidikalang hingga pelosok kecamatan di kaki pegunungan, kami hadir menemani jemaat,
+          gereja, dan lembaga Kristen dalam menjalankan kehidupan beragama yang moderat, rukun,
+          dan berdampingan dengan umat beragama lain.</p>
+      </div>
+      <div class="profil-card">
+        <div class="profil-card-row"><span>Instansi Induk</span><strong>Kantor Kemenag Kabupaten Dairi</strong></div>
+        <div class="profil-card-row"><span>Bidang</span><strong>Seksi Urusan Agama Kristen</strong></div>
+        <div class="profil-card-row"><span>Wilayah Layanan</span><strong>15 Kecamatan, Kab. Dairi</strong></div>
+        <div class="profil-card-row"><span>Alamat</span><strong>Jl. PELITA NO 20, Sidikalang, Dairi</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== VISI & MISI ===== -->
+<section class="section section-tint" id="visi-misi">
+  <div class="contour-divider" aria-hidden="true"></div>
+  <div class="section-inner">
+    <div class="section-head">
+      <p class="eyebrow">02 · Arah Pelayanan</p>
+      <h2>Visi &amp; Misi</h2>
+    </div>
+
+    <div class="visi-block">
+      <span class="quote-mark" aria-hidden="true">"</span>
+      <p class="visi-text">Terwujudnya masyarakat Kabupaten Dairi Taat Beragama , Rukun, Cerdas , Mandiri Dan Sejahtra Lahir Batin..</p>
+      <span class="visi-label">Visi</span>
+    </div>
+
+    <div class="misi-list">
+      <p class="misi-heading">Misi</p>
+      <ol>
+        <li>
+          <span class="misi-num">01</span>
+          <div><strong>Meningkatkan kualitas Kehidupan Beragama.</strong>
+            
+        </li>
+        <li>
+          <span class="misi-num">02</span>
+          <div><strong>Meningkatnya Kualitas Kerukunan Umat Beragama .</strong>
+    
+        </li>
+        <li>
+          <span class="misi-num">03</span>
+          <div><strong>Mewujudkan Tata Kelolah Kepemerintahan yang Bersih Dan Berwibawa.</strong>
+            
+  </div>
+</section>
+
+<!-- ===== STRUKTUR ORGANISASI ===== -->
+<section class="section" id="struktur">
+  <div class="section-inner">
+    <div class="section-head">
+      <p class="eyebrow">03 · Susunan Personalia</p>
+      <h2>Struktur Organisasi</h2>
+      <p class="section-sub"></p>
+    </div>
+
+  
+
+    <div class="org-chart">
+      <div class="org-tier org-tier-top">
+        <div class="org-card org-card-lead">
+          <div class="org-photo" data-org-id="org-1"><img src="pak maslon.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info">
+            <strong class="org-name">MASLON SAEBEI SIMATUPANG S. Th</strong>
+            <span class="org-role">Plt. Kasi Urusan Agama Kristen</span>
+          </div>
+        </div>
+      </div>
+
+      
+
+      <div class="org-connector" aria-hidden="true"></div>
+      
+      <div class="org-tier org-tier-staff">
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-4"><img src="arini natalia.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Arini Natalia R. Siahan, S. Hum</strong><span class="org-role">Penyuluh PNS Kec. Sidikalang</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-5"><img src="zio.png" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Zionyta Glory D. Situmorang, S. Th</strong><span class="org-role">Penyuluh PNS Kec. Silima Pungga-pungga</span></div>
+        </div>
+        <div class="org-connector" aria-hidden="true"></div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-6"><img src="werdianto.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Wardianto Elizon Harapan, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Sitinjo</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-7"><img src="hamdan.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Hamdan Judison Silalahi, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Parbuluan</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-8"><img src="rosinda.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Rosinta Simamora, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Sumbul</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-9"><img src="rosinda .jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Rosinda Situmorang, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Pegagan Hilir</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-10"><img src="rolinduat.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Rolinduat Lumban Gaol, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Silahisabungan</span></div>
+        </div>
+        
+
+
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-11"><img src="asima.png" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Asima Feronika Hutagalung, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Siempat Nempu Hulu</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-12"><img src="amudi.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Amudi Tampubolon, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Tigalingga</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-13"><img src="rudi boang.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Rudi Hartono Boangmenalu, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Gunung Sitember</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-14"><img src="uli..jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Uli Lasromondng Sihotang, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Tanah Pinem</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-15"><img src="delimaa.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Delima Andrea M. Banjarnahor, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Berampu</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-16"><img src="hotmaringin.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Hotmaringin Manik, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Lae Parira</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-17"><img src="jelita,.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Jelita Hutasoit, S. Th</strong><span class="org-role">Penyuluh PPPK Kec. Siempat Nempu</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-18"><img src="eka.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Eka Sitorus, S. Ag</strong><span class="org-role">Staf Penyuluh PPPK Kec. Siempat Nempu Hilir</span></div>
+        </div>
+        
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-19"><img src="ruslina..jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Ruslina Siboro, S. Pd.K</strong><span class="org-role">Arsiparis PPPK</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-20"><img src="reniwati.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Reniwati Tarigan, S. Th</strong><span class="org-role">Arsiparis PPPK</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-21"><img src="pesta.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Pesta Sihombing, S. Pd.K</strong><span class="org-role">Arsiparis PPPK</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-22"><img src="normiala.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Norliala Saragih, S. Pd.K</strong><span class="org-role">Arsiparis PPPK</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-23"><img src="bastanta..jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Bastanta Ginting, S. Pd.K</strong><span class="org-role">Arsiparis PPPK</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-24"><img src="bernika.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Bernika Girsang, S. Pd.K</strong><span class="org-role">Arsiparis PPPKr</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-25"><img src="Lorince.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Lorince Pandiangan, S. Pd.K</strong><span class="org-role">Arsiparis PPPK</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-25"><img src="mangatur.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Mangatur Sihombing, S. Pd.K</strong><span class="org-role">Arsiparis PPPK</span></div>
+        </div>
+        <div class="org-card org-card-small">
+          <div class="org-photo" data-org-id="org-25"><img src="intan.jpeg" alt="Foto" onerror="this.parentElement.classList.add('org-photo-fallback')"></div>
+          <div class="org-info"><strong class="org-name">Intan Haapshoh, S. Kom</strong><span class="org-role">Pranata Komputer</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GALERI KEGIATAN MINGGUAN ===== -->
+<section class="section section-tint" id="galeri">
+  <div class="contour-divider" aria-hidden="true"></div>
+  <div class="section-inner">
+    <div class="section-head">
+      <p class="eyebrow">04 &middot; Dokumentasi</p>
+      <h2>Galeri Kegiatan &amp; Dokumentasi</h2>
+      <p class="section-sub"></p>
+    </div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+
+    <!-- Kartu ini hanya muncul saat Mode Admin aktif -->
+    <button type="button" class="add-photo-card admin-only" id="openAddPhotoBtn">
+      <span class="add-photo-icon">+</span>
+      <span>Tambah Foto Kegiatan</span>
+    </button>
+
+  </div>
+</section>
+
+<!-- ===== PRESTASI ===== -->
+<section class="section" id="prestasi">
+  <div class="section-inner">
+    <div class="section-head">
+      <p class="eyebrow">05 &middot; Pencapaian</p>
+      <h2>Prestasi &amp; Penghargaan</h2>
+      <p class="section-sub"></p>
+    </div>
+
+    <div class="prestasi-grid" id="prestasiGrid"></div>
+
+    <!-- Kartu ini hanya muncul saat Mode Admin aktif -->
+    <button type="button" class="add-photo-card admin-only" id="openAddPrestasiBtn">
+      <span class="add-photo-icon">+</span>
+      <span>Tambah Prestasi</span>
+    </button>
+
+  </div>
+</section>
+
+<!-- ===== JENIS LAYANAN ===== -->
+<section class="section section-tint" id="layanan">
+  <div class="contour-divider" aria-hidden="true"></div>
+  <div class="section-inner">
+    <div class="section-head">
+      <p class="eyebrow">06 &middot; Pelayanan Publik</p>
+      <h2>Jenis Layanan</h2>
+      <p class="section-sub">Klik salah satu layanan di bawah untuk melihat syarat pengurusannya.</p>
+    </div>
+
+    <div class="layanan-grid" id="layananGrid"></div>
+  </div>
+</section>
+
+<!-- ===== MODAL SYARAT LAYANAN ===== -->
+<div class="modal-overlay" id="layananModal" hidden>
+  <div class="modal-box">
+    <button type="button" class="modal-close" id="closeLayananBtn" aria-label="Tutup">&times;</button>
+    <h3 id="layananModalTitle">Nama Layanan</h3>
+    <p class="modal-sub">Syarat &amp; berkas yang perlu disiapkan.</p>
+    <ol class="syarat-list" id="layananModalSyarat"></ol>
+  </div>
+</div>
+<!-- ===== LIGHTBOX FOTO (galeri & prestasi) ===== -->
+<div class="lightbox-overlay" id="lightboxOverlay" hidden>
+  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Tutup">&times;</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <p class="lightbox-caption" id="lightboxCaption"></p>
+</div>
+
+<!-- ===== KONTAK / FOOTER ===== -->
+<footer class="site-footer" id="kontak">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="org-photo"><img src="logo kemenag.png" alt="Foto"></div>
+      <div>
+        <strong>SEKSI URUSAN AGAMA KRISTEN</strong>
+        <p>KANTOR KEMENAG KABUPATEN DAIRIA</p>
+      </div>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>ALAMAT</h4>
+        <p>Jl. PELITA NO 20 <br>SIDIKALANG, KABUPATEN DAIRI<br>SUMATRA UTARA</p>
+      </div>
+      <div>
+        <h4>Kontak</h4>
+        <p>(0627) 21xxx<br>uagamakristen@gmail.com</p>
+      </div>
+      <div>
+        <h4>Jam Layanan</h4>
+        <p>Senin – Jumat<br>7.30 – 16.00 WIB</p>
+      </div>
+      <div>
+        <h4>Media Sosial</h4>
+        <div class="social-row">
+          <a class="social-link" href="https://www.instagram.com/sieuragkristendairi?igsh=MXZzMmJuNnhwZm03" target="_blank" rel="noopener">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" stroke-width="1.6"/>
+              <circle cx="12" cy="12" r="4.3" stroke="currentColor" stroke-width="1.6"/>
+              <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor"/>
+            </svg>
+            <span>Instagram</span>
+          </a>
+          <a class="social-link" href="https://www.facebook.com/share/1GnwzdXVwr/" target="_blank" rel="noopener">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M15 8.5h-1.6c-.6 0-1.1.5-1.1 1.1V11h2.6l-.35 2.6h-2.25V21h-2.7v-7.4H7.7V11h1.95V9.3c0-1.9 1.5-3.5 3.4-3.5H15v2.7z" fill="currentColor"/>
+            </svg>
+            <span>Facebook</span>
+          </a>
+          <a class="social-link" href="https://www.tiktok.com/@sie.urag.kristen?_r=1&_t=ZS-98Cv3HNPutD" target="_blank" rel="noopener">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M16.6 5.2c.6 1.5 1.8 2.7 3.4 3v2.5c-1.3 0-2.6-.4-3.7-1.1v6.1c0 3-2.5 5.4-5.4 5.4S5.4 18.7 5.4 15.7c0-2.9 2.3-5.3 5.2-5.4v2.6c-1.5.1-2.6 1.3-2.6 2.8 0 1.6 1.3 2.8 2.8 2.8s2.8-1.3 2.8-2.8V3.5h2.6c0 .6.1 1.1.4 1.7z" fill="currentColor"/>
+            </svg>
+            <span>TikTok</span>
+          </a>
+        </div>
+      </div>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
