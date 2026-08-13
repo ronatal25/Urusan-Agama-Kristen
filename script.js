@@ -406,6 +406,156 @@ function buildGalleryCard(item){
     }
   });
 
+  /* ---------- data gereja per kecamatan ---------- */
+  const openAddGerejaBtn = document.getElementById('openAddGerejaBtn');
+  const addGerejaModal = document.getElementById('addGerejaModal');
+  const closeAddGerejaBtn = document.getElementById('closeAddGerejaBtn');
+  const addGerejaForm = document.getElementById('addGerejaForm');
+  const addGerejaFileReal = document.getElementById('addGerejaFileReal');
+  const addGerejaPreview = document.getElementById('addGerejaPreview');
+  const gerejaGrid = document.getElementById('gerejaGrid');
+  const gerejaEmpty = document.getElementById('gerejaEmpty');
+  const gerejaFilter = document.getElementById('gerejaFilter');
+
+  let currentGerejaFilter = 'Semua';
+  let allGerejaItems = [];
+
+  openAddGerejaBtn?.addEventListener('click', () => {
+    if(!isAdmin()){
+      openModal(loginModal);
+      return;
+    }
+    openModal(addGerejaModal);
+  });
+  closeAddGerejaBtn?.addEventListener('click', () => closeModal(addGerejaModal));
+  addGerejaModal?.addEventListener('click', (e) => { if(e.target === addGerejaModal) closeModal(addGerejaModal); });
+
+  addGerejaFileReal?.addEventListener('change', () => {
+    const file = addGerejaFileReal.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      addGerejaPreview.src = reader.result;
+      addGerejaPreview.hidden = false;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function buildGerejaCard(item){
+    const figure = document.createElement('figure');
+    figure.className = 'gereja-card';
+    figure.dataset.gerejaId = item.id;
+
+    const photoDiv = document.createElement('div');
+    photoDiv.className = 'gereja-photo';
+    const img = document.createElement('img');
+    img.src = item.src;
+    img.alt = item.name;
+    photoDiv.appendChild(img);
+    photoDiv.addEventListener('click', () => openLightbox(item.src, item.name + ' — Kec. ' + item.kecamatan));
+
+    const figcaption = document.createElement('figcaption');
+    const strong = document.createElement('strong');
+    strong.className = 'gereja-name';
+    strong.textContent = item.name;
+    const span = document.createElement('span');
+    span.className = 'gereja-kecamatan';
+    span.textContent = 'Kec. ' + item.kecamatan;
+    figcaption.appendChild(strong);
+    figcaption.appendChild(span);
+
+    figure.appendChild(photoDiv);
+    figure.appendChild(figcaption);
+
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'gereja-card-delete admin-only';
+    delBtn.setAttribute('aria-label','Hapus gereja');
+    delBtn.textContent = '\u00D7';
+    delBtn.addEventListener('click', async () => {
+      if(!isAdmin()) return;
+      if(!confirm('Hapus data "' + item.name + '"?')) return;
+      try{
+        await db.collection('gereja').doc(item.id).delete();
+      }catch(err){
+        alert('Gagal menghapus data gereja: ' + err.message);
+      }
+    });
+    figure.appendChild(delBtn);
+
+    return figure;
+  }
+
+  function renderGerejaGrid(){
+    gerejaGrid.innerHTML = '';
+    const filtered = currentGerejaFilter === 'Semua'
+      ? allGerejaItems
+      : allGerejaItems.filter(item => item.kecamatan === currentGerejaFilter);
+
+    filtered.forEach(item => gerejaGrid.appendChild(buildGerejaCard(item)));
+    gerejaEmpty.hidden = filtered.length > 0;
+  }
+
+  gerejaFilter?.addEventListener('click', (e) => {
+    const chip = e.target.closest('.gereja-filter-chip');
+    if(!chip) return;
+    gerejaFilter.querySelectorAll('.gereja-filter-chip').forEach(c => c.classList.remove('is-active'));
+    chip.classList.add('is-active');
+    currentGerejaFilter = chip.dataset.kecamatan;
+    renderGerejaGrid();
+  });
+
+  /* ---------- dengarkan perubahan data gereja secara real-time dari Firestore ---------- */
+  db.collection('gereja').orderBy('createdAt', 'asc').onSnapshot((snapshot) => {
+    allGerejaItems = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      allGerejaItems.push({
+        id: doc.id,
+        src: data.url,
+        name: data.name,
+        kecamatan: data.kecamatan
+      });
+    });
+    renderGerejaGrid();
+  }, (err) => {
+    console.error('Gagal memuat data gereja:', err);
+  });
+
+  addGerejaForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!isAdmin()){
+      closeModal(addGerejaModal);
+      openModal(loginModal);
+      return;
+    }
+    const file = addGerejaFileReal.files[0];
+    const name = document.getElementById('addGerejaName').value.trim();
+    const kecamatan = document.getElementById('addGerejaKecamatan').value;
+    if(!file || !name || !kecamatan) return;
+
+    const submitBtn = addGerejaForm.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.textContent : '';
+    if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Mengunggah...'; }
+
+    try{
+      const dataUrl = await compressImageFile(file);
+
+      await db.collection('gereja').add({
+        url: dataUrl, name, kecamatan,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      addGerejaForm.reset();
+      addGerejaPreview.hidden = true;
+      closeModal(addGerejaModal);
+    }catch(err){
+      alert('Gagal menyimpan data gereja: ' + err.message);
+    }finally{
+      if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = originalBtnText; }
+    }
+  });
+
 });
 
 /* =======================================================

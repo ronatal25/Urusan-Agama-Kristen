@@ -29,6 +29,7 @@
       <a href="#struktur">Struktur</a>
       <a href="#galeri">Galeri Kegiatan</a>
       <a href="#prestasi">Prestasi</a>
+      <a href="#gereja">Data Gereja</a>
       <a href="#layanan">Layanan</a>
       <a href="#kontak">Kontak</a>
     </nav>
@@ -109,6 +110,46 @@
 </div>
 
 
+<!-- ===== MODAL TAMBAH GEREJA ===== -->
+<div class="modal-overlay" id="addGerejaModal" hidden>
+  <div class="modal-box">
+    <button type="button" class="modal-close" id="closeAddGerejaBtn" aria-label="Tutup">&times;</button>
+    <h3>Tambah Data Gereja</h3>
+    <p class="modal-sub">Unggah foto gereja beserta nama dan kecamatannya.</p>
+    <form id="addGerejaForm">
+      <img id="addGerejaPreview" class="add-photo-preview" hidden>
+      <label>Pilih Foto Gereja
+        <input type="file" id="addGerejaFileReal" accept="image/*" required>
+      </label>
+      <label>Nama Gereja
+        <input type="text" id="addGerejaName" placeholder="Contoh: GKPI Sidikalang" required>
+      </label>
+      <label>Kecamatan
+        <select id="addGerejaKecamatan" required>
+          <option value="" disabled selected>Pilih kecamatan</option>
+          <option>Sidikalang</option>
+          <option>Berampu</option>
+          <option>Sitinjo</option>
+          <option>Parbuluan</option>
+          <option>Sumbul</option>
+          <option>Silahisabungan</option>
+          <option>Silima Pungga-pungga</option>
+          <option>Lae Parira</option>
+          <option>Siempat Nempu</option>
+          <option>Siempat Nempu Hulu</option>
+          <option>Siempat Nempu Hilir</option>
+          <option>Tigalingga</option>
+          <option>Gunung Sitember</option>
+          <option>Pegagan Hilir</option>
+          <option>Tanah Pinem</option>
+        </select>
+      </label>
+      <button type="submit" class="btn btn-primary btn-small">Simpan Gereja</button>
+    </form>
+  </div>
+</div>
+
+
 <!-- ===== HERO ===== -->
 <section class="hero">
   <div class="contour-bg" aria-hidden="true"></div>
@@ -145,9 +186,6 @@
     <div class="stat"><span class="stat-num">15</span><span class="stat-label">Kecamatan Terlayani</span></div>
     <div class="stat"><span class="stat-num">61+</span><span class="stat-label">Tahun Melayani</span></div>
     <div class="stat"><span class="stat-num">16</span><span class="stat-label">Penyuluh Agama Kristen Aktif</span></div>
-  </div>
-</section>
-
   </div>
 </section>
 
@@ -386,12 +424,52 @@
   </div>
 </section>
 
-<!-- ===== JENIS LAYANAN ===== -->
+<!-- ===== DATA GEREJA PER KECAMATAN ===== -->
+<section class="section section-tint" id="gereja">
+  <div class="contour-divider" aria-hidden="true"></div>
+  <div class="section-inner">
+    <div class="section-head">
+      <p class="eyebrow">06 &middot; Rumah Ibadah</p>
+      <h2>Data Gereja per Kecamatan</h2>
+      <p class="section-sub">Dokumentasi gereja-gereja binaan di 15 kecamatan se-Kabupaten Dairi. Klik salah satu kecamatan untuk menyaring.</p>
+    </div>
+
+    <div class="gereja-filter" id="gerejaFilter">
+      <button type="button" class="gereja-filter-chip is-active" data-kecamatan="Semua">Semua</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Sidikalang">Sidikalang</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Berampu">Berampu</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Sitinjo">Sitinjo</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Parbuluan">Parbuluan</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Sumbul">Sumbul</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Silahisabungan">Silahisabungan</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Silima Pungga-pungga">Silima Pungga-pungga</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Lae Parira">Lae Parira</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Siempat Nempu">Siempat Nempu</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Siempat Nempu Hulu">Siempat Nempu Hulu</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Siempat Nempu Hilir">Siempat Nempu Hilir</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Tigalingga">Tigalingga</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Gunung Sitember">Gunung Sitember</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Pegagan Hilir">Pegagan Hilir</button>
+      <button type="button" class="gereja-filter-chip" data-kecamatan="Tanah Pinem">Tanah Pinem</button>
+    </div>
+
+    <div class="gereja-grid" id="gerejaGrid"></div>
+    <p class="gereja-empty" id="gerejaEmpty" hidden>Belum ada data gereja untuk kecamatan ini.</p>
+
+    <!-- Kartu ini hanya muncul saat Mode Admin aktif -->
+    <button type="button" class="add-photo-card admin-only" id="openAddGerejaBtn">
+      <span class="add-photo-icon">+</span>
+      <span>Tambah Gereja</span>
+    </button>
+
+  </div>
+</section>
+
 <section class="section section-tint" id="layanan">
   <div class="contour-divider" aria-hidden="true"></div>
   <div class="section-inner">
     <div class="section-head">
-      <p class="eyebrow">06 &middot; Pelayanan Publik</p>
+      <p class="eyebrow">07 &middot; Pelayanan Publik</p>
       <h2>Jenis Layanan</h2>
       <p class="section-sub">Klik salah satu layanan di bawah untuk melihat syarat pengurusannya.</p>
     </div>
