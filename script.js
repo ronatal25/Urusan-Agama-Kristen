@@ -495,11 +495,12 @@ function buildGalleryCard(item){
       return;
     }
 
-    const filtered = allGerejaItems.filter(item => item.kecamatan === currentGerejaFilter);
-    filtered.forEach(item => gerejaGrid.appendChild(buildGerejaCard(item)));
+    allGerejaItems.forEach(item => gerejaGrid.appendChild(buildGerejaCard(item)));
     gerejaEmpty.textContent = 'Belum ada data gereja untuk kecamatan ini.';
-    gerejaEmpty.hidden = filtered.length > 0;
+    gerejaEmpty.hidden = allGerejaItems.length > 0;
   }
+
+  let gerejaUnsubscribe = null;
 
   gerejaFilter?.addEventListener('click', (e) => {
     const chip = e.target.closest('.gereja-filter-chip');
@@ -507,25 +508,38 @@ function buildGalleryCard(item){
     gerejaFilter.querySelectorAll('.gereja-filter-chip').forEach(c => c.classList.remove('is-active'));
     chip.classList.add('is-active');
     currentGerejaFilter = chip.dataset.kecamatan;
-    renderGerejaGrid();
+    loadGerejaForKecamatan(currentGerejaFilter);
   });
 
-  /* ---------- dengarkan perubahan data gereja secara real-time dari Firestore ---------- */
-  db.collection('gereja').orderBy('createdAt', 'asc').onSnapshot((snapshot) => {
-    allGerejaItems = [];
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      allGerejaItems.push({
-        id: doc.id,
-        src: data.url,
-        name: data.name,
-        kecamatan: data.kecamatan
+  /* ---------- muat data gereja HANYA untuk kecamatan yang dipilih (hemat kuota & lebih cepat) ---------- */
+  function loadGerejaForKecamatan(kecamatan){
+    if(gerejaUnsubscribe){ gerejaUnsubscribe(); gerejaUnsubscribe = null; }
+
+    gerejaGrid.innerHTML = '';
+    gerejaEmpty.textContent = 'Memuat data gereja...';
+    gerejaEmpty.hidden = false;
+
+    gerejaUnsubscribe = db.collection('gereja')
+      .where('kecamatan', '==', kecamatan)
+      .orderBy('createdAt', 'asc')
+      .onSnapshot((snapshot) => {
+        allGerejaItems = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          allGerejaItems.push({
+            id: doc.id,
+            src: data.url,
+            name: data.name,
+            kecamatan: data.kecamatan
+          });
+        });
+        renderGerejaGrid();
+      }, (err) => {
+        console.error('Gagal memuat data gereja:', err);
+        gerejaEmpty.textContent = 'Gagal memuat data gereja: ' + err.message;
+        gerejaEmpty.hidden = false;
       });
-    });
-    renderGerejaGrid();
-  }, (err) => {
-    console.error('Gagal memuat data gereja:', err);
-  });
+  }
 
   addGerejaForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
