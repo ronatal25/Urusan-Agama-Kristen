@@ -417,7 +417,7 @@ function buildGalleryCard(item){
   const gerejaEmpty = document.getElementById('gerejaEmpty');
   const gerejaFilter = document.getElementById('gerejaFilter');
 
-  let currentGerejaFilter = 'Semua';
+  let currentGerejaFilter = null;
   let allGerejaItems = [];
 
   openAddGerejaBtn?.addEventListener('click', () => {
@@ -488,11 +488,16 @@ function buildGalleryCard(item){
 
   function renderGerejaGrid(){
     gerejaGrid.innerHTML = '';
-    const filtered = currentGerejaFilter === 'Semua'
-      ? allGerejaItems
-      : allGerejaItems.filter(item => item.kecamatan === currentGerejaFilter);
 
+    if(!currentGerejaFilter){
+      gerejaEmpty.textContent = 'Pilih salah satu kecamatan di atas untuk melihat data gereja.';
+      gerejaEmpty.hidden = false;
+      return;
+    }
+
+    const filtered = allGerejaItems.filter(item => item.kecamatan === currentGerejaFilter);
     filtered.forEach(item => gerejaGrid.appendChild(buildGerejaCard(item)));
+    gerejaEmpty.textContent = 'Belum ada data gereja untuk kecamatan ini.';
     gerejaEmpty.hidden = filtered.length > 0;
   }
 
